@@ -111,7 +111,7 @@ class ExpenseTracker:
             if description:
                 self.__expenses['Entry'][id - 1]['Description'] = description
             if amount:
-                if amount > self.__balance:
+                if amount > self.__balance and self.__expenses['Entry'][id - 1]['Amount'][-5:] == "(Db.)":
                     print("You don't have enough funds!")
                     return False
                 self.__expenses['Entry'][id - 1]['Amount'] = f"₹{amount}"
