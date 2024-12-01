@@ -10,7 +10,7 @@ Project - [project link](https://roadmap.sh/projects/expense-tracker)
 - List all expenses in a tabular format.
 - Update existing expenses by ID.
 - Delete expenses by ID.
-- Summarize expenses for a specific month or year.
+- Summarize expenses for a specific month or year and show it in a graphical representation.
 - Track your current balance.
 
 ## Getting Started
@@ -94,7 +94,7 @@ exp-cli summary -m 11 -y 2023
 - `delete`: Delete an expense.
   - `--id`: ID of the expense to delete (required).
 
-- `summary`: Summarize expenses for a specific month and/or year.
+- `summary`: Summarize expenses for a specific month and/or year and show in a graph.
   - `-m`: Month (optional).
   - `-y`: Year (optional).
 
