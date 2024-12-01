@@ -246,6 +246,7 @@ def args() -> argparse.Namespace:
             --desc (str, optional): Description of the expense. Required for 'add' and 'update' commands.
             --amt (float, optional): Amount of the expense. Required for 'add' and 'update' commands.
             --id (int, optional): ID of the expense. Required for 'update' and 'delete' commands.
+            -t (str, optional): Specifies if the transaction is debit or credit.
             -m (int, optional): Month for filtering expenses in the 'summary' command.
             -y (int, optional): Year for filtering expenses in the 'summary' command.
     '''
