@@ -1,101 +1,103 @@
-# ExpenseTracker
+# Expense Tracker
 
-## Overview
-
-ExpenseTracker is a command-line tool for managing personal expenses. It allows users to add, list, update, delete, and summarize expenses, all stored in a JSON file for persistence. This program provides an easy way to keep track of your spending directly from the terminal.
+Expense Tracker is a simple command-line application to help you track your expenses and manage your balance. The project allows you to add, list, update, delete, and summarize your expenses. It uses a JSON file to store the data persistently.
 
 Project - [project link](https://roadmap.sh/projects/expense-tracker)
 
 ## Features
 
-- **Add Expense:** Add a new expense with a description and amount.
-- **List Expenses:** List all recorded expenses.
-- **Update Expense:** Update the description or amount of an existing expense by ID.
-- **Delete Expense:** Delete an expense by ID.
-- **Summarize Expenses:** Calculate and display the total expenses for a specific month and year.
+- Add new expenses with description, amount, and type (credit or debit).
+- List all expenses in a tabular format.
+- Update existing expenses by ID.
+- Delete expenses by ID.
+- Summarize expenses for a specific month or year.
+- Track your current balance.
 
-## Installation
+## Getting Started
 
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/Sajal-26/ExpenseTracker.git
-    cd ExpenseTracker
-    ```
+### Prerequisites
 
-2. **Ensure you have Python installed:**
-    - You can download Python from [python.org](https://www.python.org/downloads/).
+- Python 3.x
 
-3. **Add the batch file to your environment variables:**
-    - Create a batch file named `exp-cli.bat` with the following content:
-      ```bat
-      @echo off
-      pythonpPath\to\ExpenseTracker\exp-cli.py %*
-      ```
-    - Add the path to `exp-cli.bat` to your system's environment variables.
+### Installation
 
-## Usage
+1. Clone the repository:
 
-Run the `exp-cli` command followed by the desired action and necessary parameters:
-
-### Commands
-
-- **Add an Expense:**
-    ```bash
-    exp-cli add --desc "Description of the expense" --amt 123.45
-    ```
-
-- **List all Expenses:**
-    ```bash
-    exp-cli list
-    ```
-
-- **Update an Expense:**
-    ```bash
-    exp-cli update --id 1 --desc "Updated description" --amt 543.21
-    ```
-
-- **Delete an Expense:**
-    ```bash
-    exp-cli delete --id 1
-    ```
-
-- **Summarize Expenses:**
-    ```bash
-    exp-cli summary -m 11 -y 2023
-    ```
-
-### Arguments
-
-- `command`: The action to perform (add, list, update, delete, summary).
-- `--desc`: Description of the expense (required for add and update).
-- `--amt`: Amount of the expense (required for add and update).
-- `--id`: ID of the expense (required for update and delete).
-- `-m`: Month for filtering expenses in the summary.
-- `-y`: Year for filtering expenses in the summary.
-
-## Example
-
-Add a new expense:
-```bash
-exp-cli add --desc "Groceries" --amt 150.00
+```sh
+git clone https://github.com/Sajal-26/ExpenseTracker.git
+cd ExpenseTracker
 ```
 
-List all expenses:
-```bash
+2. Add the batch file to your environment variables for easier access. The batch file `exp-cli.bat` contains:
+
+```bat
+@echo off
+python path\to\your\ExpenseTracker\exp-cli.py %*
+```
+
+Replace `path\to\your\ExpenseTracker` with the actual path to your `ExpenseTracker` directory.
+
+### Usage
+
+You can use the command-line interface to interact with the Expense Tracker. The following commands are supported:
+
+1. **Add an expense:**
+
+```sh
+exp-cli add --desc "Grocery Shopping" --amt 1500 -t d
+```
+
+2. **List all expenses:**
+
+```sh
 exp-cli list
 ```
 
-Update an existing expense:
-```bash
-exp-cli update --id 1 --desc "Grocery shopping" --amt 160.00
+3. **Update an expense:**
+
+```sh
+exp-cli update --id 1 --desc "Updated Description" --amt 2000
 ```
 
-Delete an expense:
-```bash
+4. **Delete an expense:**
+
+```sh
 exp-cli delete --id 1
 ```
 
-Summarize expenses for November 2023:
-```bash
+5. **Summarize expenses:**
+
+```sh
+exp-cli summary -m 11 -y 2023
+```
+
+### Commands and Arguments
+
+- `add`: Add a new expense.
+  - `--desc`: Description of the expense (required).
+  - `--amt`: Amount of the expense (required).
+  - `-t`: Type of the expense, 'c' for credit, 'd' for debit (required).
+
+- `list`: List all expenses.
+
+- `update`: Update an existing expense.
+  - `--id`: ID of the expense to update (required).
+  - `--desc`: Updated description (optional).
+  - `--amt`: Updated amount (optional).
+
+- `delete`: Delete an expense.
+  - `--id`: ID of the expense to delete (required).
+
+- `summary`: Summarize expenses for a specific month and/or year.
+  - `-m`: Month (optional).
+  - `-y`: Year (optional).
+
+### Example
+
+```sh
+exp-cli add --desc "Dinner at restaurant" --amt 2000 -t d
+exp-cli list
+exp-cli update --id 1 --desc "Dinner at fancy restaurant"
+exp-cli delete --id 1
 exp-cli summary -m 11 -y 2023
 ```
