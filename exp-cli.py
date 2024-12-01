@@ -12,13 +12,15 @@ class ExpenseTracker:
     def __init__(self) -> None:
         self.__path = os.path.abspath(os.path.join(os.path.dirname(__file__), "expense.json"))
         if not os.path.exists(self.__path):
-            self.__expenses = []
+            self.__expenses = {"Balance" : 0.0, "Entry" : []}    # Enter your balance
             with open(self.__path, 'w', encoding = 'UTF-8') as f:
                 json.dump(self.__expenses, f, ensure_ascii = False)
 
         else:
             with open(self.__path, 'r', encoding = 'UTF-8') as f:
                 self.__expenses = json.load(f)
+
+        self.__balance = self.__expenses['Balance']
 
     def list_exp(self) -> None:
         '''
@@ -28,15 +30,16 @@ class ExpenseTracker:
 
             Returns: None
         '''     
-        head = ["ID", "Date", "Description", "Amount"]
+        head = ["ID", "Date", "Description", "Amount", "Balance"]
         table = []
 
-        for i in self.__expenses:
+        for i in self.__expenses['Entry']:
             table.append([
                 i.get("ID"),
                 i.get("Date"),
                 i.get("Description"),
-                i.get("Amount")
+                i.get("Amount"),
+                f"₹{self.__balance}"
             ])
 
         print(tabulate(table, head, tablefmt = "grid"))
@@ -54,12 +57,14 @@ class ExpenseTracker:
                 bool: Expense added or not
         '''
         try:
-            self.__expenses.append({
-                'ID' : len(self.__expenses) + 1,
+            self.__expenses['Entry'].append({
+                'ID' : len(self.__expenses['Entry']) + 1,
                 'Date' : datetime.datetime.now().strftime("%d-%m-%y"),
                 "Description" : description,
-                "Amount" : f"₹{amount}"
+                "Amount" : f"₹{amount}",
             })
+
+            self.__expenses["Balance"] = self.__balance = self.__balance - amount
 
             with open(self.__path, 'w', encoding = 'UTF-8') as f:
                 json.dump(self.__expenses, f, indent = 4, ensure_ascii = False)
@@ -81,13 +86,14 @@ class ExpenseTracker:
             Returns:
                 bool: Expense updated or not
         '''
-        if id >= len(self.__expenses):
+        if id > len(self.__expenses['Entry']):
             return False
         try:
             if description:
-                self.__expenses[id - 1]['Description'] = description
+                self.__expenses['Entry'][id - 1]['Description'] = description
             if amount:
-                self.__expenses[id - 1]['Amount'] = f"₹{amount}"
+                self.__expenses['Entry'][id - 1]['Amount'] = f"₹{amount}"
+                self.__expenses["Balance"] = self.__balance = self.__balance - amount
 
             with open(self.__path, 'w', encoding = 'UTF-8') as f:
                 json.dump(self.__expenses, f, indent = 4, ensure_ascii = False)
@@ -107,13 +113,14 @@ class ExpenseTracker:
             Returns:
                 bool: Expense deleted or not
         '''
-        if id > len(self.__expenses):
+        if id > len(self.__expenses['Entry']):
             return False
         
         try:
-            self.__expenses.pop(id - 1)
+            self.__expenses["Balance"] = self.__balance = self.__balance + float(self.__expenses['Entry'][id - 1]["Amount"][1:])
+            self.__expenses['Entry'].pop(id - 1)
 
-            for index, exp in enumerate(self.__expenses):
+            for index, exp in enumerate(self.__expenses['Entry']):
                 exp['ID'] = index + 1
 
             with open(self.__path, 'w', encoding = 'UTF-8') as f:
@@ -124,7 +131,7 @@ class ExpenseTracker:
             return False
         
 
-    def summary(self, month : int | None = None, year : int | None = None) -> None:
+    def summary(self, month : int | None = None, year : int | None = None) -> float:
         '''
             Calculates the sum of the expenses
 
@@ -132,10 +139,11 @@ class ExpenseTracker:
                 month(int) : month of the expense
                 year(int) : year of the expense
 
-            Returns: None
+            Returns: 
+                sum(float) : total expenditure
         '''
         sum = 0
-        for i in self.__expenses:
+        for i in self.__expenses['Entry']:
             if month and month != int(i.get("Date").split("-")[1]):
                 continue
 
@@ -145,6 +153,7 @@ class ExpenseTracker:
             sum += float(i.get("Amount").replace("₹", ""))
 
         print(f"Total expenses: ₹{sum}")
+        return sum
 
 
 def args() -> argparse.Namespace:
