@@ -28,7 +28,13 @@ git clone https://github.com/Sajal-26/ExpenseTracker.git
 cd ExpenseTracker
 ```
 
-2. Add the batch file to your environment variables for easier access. The batch file `exp-cli.bat` contains:
+2. Install the required Python packages:
+
+```sh
+pip install -r requirements.txt
+```
+
+3. Add the batch file to your environment variables for easier access. The batch file `exp-cli.bat` contains:
 
 ```bat
 @echo off
