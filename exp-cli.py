@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt
 from tabulate import tabulate
+import numpy as np
 import datetime
 import argparse
 import json
@@ -12,7 +14,7 @@ class ExpenseTracker:
     def __init__(self) -> None:
         self.__path = os.path.abspath(os.path.join(os.path.dirname(__file__), "expense.json"))
         if not os.path.exists(self.__path):
-            self.__expenses = {"Balance" : float(input("Enter your current Balance : ")), "Entry" : []}
+            self.__expenses = {"Balance" : float(input("Enter your current Balance : ")), "Credit" : 0, "Debit" : 0, "Entry" : []}
             with open(self.__path, 'w', encoding = 'UTF-8') as f:
                 json.dump(self.__expenses, f, ensure_ascii = False)
 
@@ -79,8 +81,10 @@ class ExpenseTracker:
 
             if ttype.lower() == 'c':
                 self.__balance = self.__balance + amount
+                self.__expenses['Credit'] += amount
             else:
                 self.__balance = self.__balance - amount
+                self.__expenses['Debit'] += amount
             
             self.__expenses["Balance"] = self.__balance
 
@@ -142,9 +146,14 @@ class ExpenseTracker:
             temp = self.__expenses['Entry'][id - 1]["Amount"]
             amt = float(self.__expenses['Entry'][id - 1]["Amount"][1:-5])
             if temp[-5:] == '(Cr.)':
+                if amt > self.__balance:
+                    print("You cannot delete this Transaction!")
+                    return False
                 self.__expenses["Balance"] = self.__balance = self.__balance - amt
+                self.__expenses['Credit'] -= amt
             else:
                 self.__expenses['Balance'] = self.__balance = self.__balance + amt
+                self.__expenses['Debit'] -= amt
                 
             self.__expenses['Entry'].pop(id - 1)
 
@@ -170,18 +179,55 @@ class ExpenseTracker:
 
             Returns: None
         '''
-        sum = 0
+        monthly_exp = [0] * 12
+        monthly_crd = [0] * 12
+
         for i in self.__expenses['Entry']:
-            if month and month != int(i.get("Date").split("-")[1]):
+            date = i.get("Date").split("-")
+            exp_month = int(date[1])
+            exp_year = int(date[2])
+
+            if year and year != exp_year:
                 continue
 
-            if year and year != int(i.get("Date").split("-")[2]):
-                continue
+            amt = float(i.get("Amount")[1:-5])
 
-            sum += float(i.get("Amount")[1:-5])
+            if i.get('Amount')[-5:] == '(Db.)':
+                monthly_exp[exp_month - 1] += amt
+            else:
+                monthly_crd[exp_month - 1] += amt
 
-        print(f"Total Expenses : ₹{sum}")
-        print(f"Total Balance  : ₹{self.__balance}")
+        if month:
+            exp = monthly_exp[month - 1]
+            crd = monthly_crd[month - 1]
+
+            print(f"Total Expenses for month {month}: ₹{exp}")
+            print(f"Total Income for month {month}: ₹{crd}")
+        else:
+            total_exp = sum(monthly_exp)
+            total_crd = sum(monthly_crd)
+
+            x = np.arange(12)
+            width = 0.35
+
+            _, ax = plt.subplots()
+            ax.bar(x - width/2, monthly_exp, width, label='Expenses', color='red', alpha=0.7)
+            ax.bar(x + width/2, monthly_crd, width, label='Income', color='green', alpha=0.7)
+
+            ax.set_xlabel('Month')
+            ax.set_ylabel('Amount (₹)')
+            ax.set_title(f'Yearly Summary for {year if year else "All Years"}')
+            ax.set_xticks(x)
+            ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+            ax.legend()
+
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+
+            print(f"Total Expenses : ₹{total_exp}")
+            print(f"Total Income   : ₹{total_crd}")
+            print(f"Total Balance  : ₹{self.__balance}")
+            plt.show()
 
 
 def args() -> argparse.Namespace:
