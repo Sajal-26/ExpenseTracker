@@ -41,7 +41,7 @@ class ExpenseTracker:
                 i.get("Date"),
                 i.get("Description"),
                 i.get("Amount"),
-                f"₹{self.__balance}"
+                i.get("Balance")
             ])
 
         print(tabulate(table, head, tablefmt = "grid"))
@@ -72,13 +72,7 @@ class ExpenseTracker:
             
             amt = f"₹{amount} ({am_type})"
 
-            self.__expenses['Entry'].append({
-                'ID' : len(self.__expenses['Entry']) + 1,
-                'Date' : datetime.datetime.now().strftime("%d-%m-%y"),
-                "Description" : description,
-                "Amount" : amt
-            })
-
+            
             if ttype.lower() == 'c':
                 self.__balance = self.__balance + amount
                 self.__expenses['Credit'] += amount
@@ -87,6 +81,14 @@ class ExpenseTracker:
                 self.__expenses['Debit'] += amount
             
             self.__expenses["Balance"] = self.__balance
+
+            self.__expenses['Entry'].append({
+                'ID' : len(self.__expenses['Entry']) + 1,
+                'Date' : datetime.datetime.now().strftime("%d-%m-%y"),
+                "Description" : description,
+                "Amount" : amt,
+                "Balance" : f"₹{self.__balance}"
+            })
 
             with open(self.__path, 'w', encoding = 'UTF-8') as f:
                 json.dump(self.__expenses, f, indent = 4, ensure_ascii = False)
@@ -246,7 +248,6 @@ def args() -> argparse.Namespace:
             --desc (str, optional): Description of the expense. Required for 'add' and 'update' commands.
             --amt (float, optional): Amount of the expense. Required for 'add' and 'update' commands.
             --id (int, optional): ID of the expense. Required for 'update' and 'delete' commands.
-            -t (str, optional): Specifies if the transaction is debit or credit.
             -m (int, optional): Month for filtering expenses in the 'summary' command.
             -y (int, optional): Year for filtering expenses in the 'summary' command.
     '''
